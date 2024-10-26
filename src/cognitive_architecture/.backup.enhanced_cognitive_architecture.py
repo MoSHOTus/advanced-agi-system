@@ -5,8 +5,6 @@ from transformers import BertTokenizer, BertModel
 import spacy
 import faiss
 import json
-from datetime import datetime
-from collections import defaultdict
 
 class EnhancedCognitiveArchitecture:
     def __init__(self):
