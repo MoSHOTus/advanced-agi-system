@@ -1,12 +1,12 @@
 
 numpy==1.21.5
-torch==1.10.0
+torch==2.0.1
 transformers==4.15.0
 spacy==3.2.0
 faiss-cpu==1.7.1
 networkx==2.6.3
 pillow==8.4.0
-torchvision==0.11.1
+torchvision==0.15.2
 matplotlib==3.5.2
 flask==2.0.2
 werkzeug==2.0.2
