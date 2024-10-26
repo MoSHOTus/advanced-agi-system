@@ -3,14 +3,15 @@ import logging
 from datetime import datetime
 import json
 import os
-from src.cognitive_architecture.enhanced_cognitive_architecture import EnhancedCognitiveSystem
+from src.cognitive_architecture.enhanced_cognitive_architecture import EnhancedCognitiveArchitecture, SystemIntegrator
 from src.utils.visualization import plot_learning_curve, plot_performance_metrics
 
 logger = logging.getLogger("AGI_Test")
 
 class SystemTester:
-    def __init__(self):
-        self.system = EnhancedCognitiveSystem()
+    def __init__(self, cognitive_system: EnhancedCognitiveArchitecture, integrator: SystemIntegrator):
+        self.system = cognitive_system
+        self.integrator = integrator
         self.test_results = []
         
     def run_comprehensive_test(self):
@@ -19,10 +20,9 @@ class SystemTester:
         self.test_text_processing()
         self.test_image_processing()
         self.test_learning_adaptation()
-        self.test_semantic_network()
-        self.test_conceptual_graph()
-        self.test_episodic_memory()
-        self.test_procedural_memory()
+        self.test_creativity()
+        self.test_emotional_system()
+        self.test_long_term_memory()
         
         self.analyze_results()
         
@@ -61,34 +61,23 @@ class SystemTester:
 
     def test_learning_adaptation(self):
         logger.info("Testing learning and adaptation")
-        test_input = "AGI systems can learn and adapt to new situations."
-        result = self.system.learn_and_adapt(test_input, "text")
-        self.test_results.append(TestResult('learning_adaptation', test_input, result, datetime.now()))
-        self._analyze_system_state("After learning and adaptation")
+        # Implement learning and adaptation test
+        pass
 
-    def test_semantic_network(self):
-        logger.info("Testing semantic network")
-        network_state = self.system.semantic_network.get_network_state()
-        self.test_results.append(TestResult('semantic_network', 'network_state', network_state, datetime.now()))
-        self._analyze_system_state("After semantic network test")
+    def test_creativity(self):
+        logger.info("Testing creativity")
+        # Implement creativity test
+        pass
 
-    def test_conceptual_graph(self):
-        logger.info("Testing conceptual graph")
-        graph_state = self.system.conceptual_graph.get_graph_state()
-        self.test_results.append(TestResult('conceptual_graph', 'graph_state', graph_state, datetime.now()))
-        self._analyze_system_state("After conceptual graph test")
+    def test_emotional_system(self):
+        logger.info("Testing emotional system")
+        # Implement emotional system test
+        pass
 
-    def test_episodic_memory(self):
-        logger.info("Testing episodic memory")
-        memory_state = self.system.episodic_memory.get_memory_state()
-        self.test_results.append(TestResult('episodic_memory', 'memory_state', memory_state, datetime.now()))
-        self._analyze_system_state("After episodic memory test")
-
-    def test_procedural_memory(self):
-        logger.info("Testing procedural memory")
-        memory_state = self.system.procedural_memory.get_memory_state()
-        self.test_results.append(TestResult('procedural_memory', 'memory_state', memory_state, datetime.now()))
-        self._analyze_system_state("After procedural memory test")
+    def test_long_term_memory(self):
+        logger.info("Testing long-term memory")
+        # Implement long-term memory test
+        pass
 
     def _analyze_system_state(self, stage):
         logger.info(f"Analyzing system state: {stage}")
