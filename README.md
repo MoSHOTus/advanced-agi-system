@@ -32,6 +32,7 @@ BLACKBOXAI is an advanced AI model created by BLACKBOXAI company. It is capable 
 ├── main.py
 └── requirements.txt
 ```
+![image](https://github.com/user-attachments/assets/579c0eda-4d79-4e19-b614-a37f1e069553)
 
 ## Setup
 
@@ -70,4 +71,4 @@ To use the web interface, enter your query in the text area, optionally upload a
 ## AI-Generated Code
 
 It's important to note that all the code in this project, including this README file, has been generated and is being maintained by BLACKBOXAI. This project serves as an example of AI-driven software development and showcases the capabilities of advanced language models in creating complex software systems.
-![image](https://github.com/user-attachments/assets/03b66d15-e01b-4d2d-967c-ef85aa2f16c4)
+
