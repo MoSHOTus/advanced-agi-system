@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced AGI Interface</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- D3.js для визуализации графа -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        body { 
+            padding: 20px;
+            background-color: #f8f9fa;
+        }
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        #error {
+            display: none;
+            color: red;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #ffe6e6;
+        }
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .system-stats {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        #knowledgeGraph {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .emotion-indicator {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            text-align: center;
+            color: white;
+        }
+        .progress {
+            height: 25px;
+            margin: 10px 0;
+        }
+        .progress-bar {
+            line-height: 25px;
+            font-size: 14px;
+        }
+        .tab-content {
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #dee2e6;
+            border-top: none;
+            border-radius: 0 0 5px 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="text-center mb-4">Advanced AGI Interface</h1>
+        
+        <!-- Основная панель управления -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-body">
+                        <form id="queryForm">
+                            <div class="form-group">
+                                <label for="query">Enter your query:</label>
+                                <textarea class="form-control" id="query" name="query" rows="3" 
+                                    placeholder="Enter your query here..." required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="file">Upload file (optional):</label>
+                                <input type="file" class="form-control" id="file" name="file">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Process Query</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Панель состояния системы -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">System State</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="emotionalState"></div>
+                        <div id="systemStats"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Индикатор загрузки -->
+        <div id="loading" class="alert alert-info">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <span class="ms-2">Processing your request...</span>
+        </div>
+
+        <!-- Сообщение об ошибке -->
+        <div id="error" class="alert alert-danger"></div>
+
+        <!-- Вкладки для результатов -->
+        <ul class="nav nav-tabs" id="resultTabs" role="tablist">
+            <li class="nav-item">
+                <a class="nav-link active" id="results-tab" data-bs-toggle="tab" 
+                   href="#results" role="tab">Results</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="knowledge-tab" data-bs-toggle="tab" 
+                   href="#knowledge" role="tab">Knowledge Graph</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" id="analytics-tab" data-bs-toggle="tab" 
+                   href="#analytics" role="tab">Analytics</a>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="resultTabsContent">
+            <!-- Вкладка результатов -->
+            <div class="tab-pane fade show active" id="results" role="tabpanel">
+                <div id="queryResult"></div>
+            </div>
+
+            <!-- Вкладка графа знаний -->
+            <div class="tab-pane fade" id="knowledge" role="tabpanel">
+                <div id="knowledgeGraph"></div>
+            </div>
+
+            <!-- Вкладка аналитики -->
+            <div class="tab-pane fade" id="analytics" role="tabpanel">
+                <div class="row">
+                    <div class="col-md-6">
+                        <canvas id="learningChart"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <canvas id="emotionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        let learningChart = null;
+        let emotionChart = null;
+        let knowledgeGraphSimulation = null;
+
+        // Инициализация графиков
+        function initCharts() {
+            // График обучения
+            const learningCtx = document.getElementById('learningChart').getContext('2d');
+            learningChart = new Chart(learningCtx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Learning Progress',
+                        data: [],
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                }
+            });
+
+            // График эмоций
+            const emotionCtx = document.getElementById('emotionChart').getContext('2d');
+            emotionChart = new Chart(emotionCtx, {
+                type: 'radar',
+                data: {
+                    labels: ['Curiosity', 'Satisfaction', 'Frustration', 'Excitement'],
+                    datasets: [{
+                        label: 'Emotional State',
+                        data: [0, 0, 0, 0],
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: 'rgb(75, 192, 192)',
+                        pointBackgroundColor: 'rgb(75, 192, 192)'
+                    }]
+                }
+            });
+        }
+
+        // Обновление статистики системы
+        function updateSystemStats(stats) {
+            const statsDiv = document.getElementById('systemStats');
+            statsDiv.innerHTML = `
+                <h6>Experience Level</h6>
+                <div class="progress">
+                    <div class="progress-bar bg-success" style="width: ${stats.experience_level * 100}%">
+                        ${(stats.experience_level * 100).toFixed(1)}%
+                    </div>
+                </div>
+                <h6>Memory Usage</h6>
+                <div class="progress">
+                    <div class="progress-bar bg-info" style="width: ${stats.memory_usage * 100}%">
+                        ${(stats.memory_usage * 100).toFixed(1)}%
+                    </div>
+                </div>
+                <h6>Knowledge Size: ${stats.knowledge_size}</h6>
+            `;
+        }
+
+        // Обновление эмоционального состояния
+        function updateEmotionalState(emotions) {
+            const emotionsDiv = document.getElementById('emotionalState');
+            emotionsDiv.innerHTML = `
+                <h6>Dominant Emotion: ${emotions.dominant_emotion}</h6>
+                <div class="emotion-indicator" style="background-color: 
+                    ${getEmotionColor(emotions.dominant_emotion)}">
+                    ${emotions.dominant_emotion} (${(emotions[emotions.dominant_emotion] * 100).toFixed(1)}%)
+                </div>
+            `;
+
+            // Обновление графика эмоций
+            emotionChart.data.datasets[0].data = [
+                emotions.curiosity,
+                emotions.satisfaction,
+                emotions.frustration,
+                emotions.excitement
+            ];
+            emotionChart.update();
+        }
+
+        // Визуализация графа знаний
+        function visualizeKnowledgeGraph(data) {
+            const width = document.getElementById('knowledgeGraph').clientWidth;
+            const height = document.getElementById('knowledgeGraph').clientHeight;
+
+            // Очистка предыдущего графа
+            d3.select("#knowledgeGraph").selectAll("*").remove();
+
+            const svg = d3.select("#knowledgeGraph")
+                .append("svg")
+                .attr("width", width)
+                .attr("height", height);
+
+            // Создание силового графа
+            const simulation = d3.forceSimulation(data.nodes)
+                .force("link", d3.forceLink(data.links).id(d => d.id))
+                .force("charge", d3.forceManyBody())
+                .force("center", d3.forceCenter(width / 2, height / 2));
+
+            // Отрисовка связей
+            const link = svg.append("g")
+                .selectAll("line")
+                .data(data.links)
+                .join("line")
+                .attr("stroke", "#999")
+                .attr("stroke-opacity", 0.6);
+
+            // Отрисовка узлов
+            const node = svg.append("g")
+                .selectAll("circle")
+                .data(data.nodes)
+                .join("circle")
+                .attr("r", 5)
+                .attr("fill", d => getNodeColor(d.type));
+
+            // Добавление подписей
+            const label = svg.append("g")
+                .selectAll("text")
+                .data(data.nodes)
+                .join("text")
+                .text(d => d.name)
+                .attr("font-size", "12px")
+                .attr("dx", 8)
+                .attr("dy", 3);
+
+            // Обновление позиций
+            simulation.on("tick", () => {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
+
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+
+                label
+                    .attr("x", d => d.x)
+                    .attr("y", d => d.y);
+            });
+        }
+
+        // Обработка формы
+        document.getElementById('queryForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(this);
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('error').style.display = 'none';
+            
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Server error: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                displayResult(result);
+                
+                // Обновление состояния системы
+                updateSystemStats(result.system_state);
+                updateEmotionalState(result.system_state.emotional_state);
+                
+                // Обновление графа знаний
+                if (result.knowledge_graph) {
+                    visualizeKnowledgeGraph(result.knowledge_graph);
+                }
+                
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('error').textContent = `Error: ${error.message}`;
+                document.getElementById('error').style.display = 'block';
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        // Вспомогательные функции
+        function getEmotionColor(emotion) {
+            const colors = {
+                'curiosity': '#4CAF50',
+                'satisfaction': '#2196F3',
+                'frustration': '#F44336',
+                'excitement': '#FFC107'
+            };
+            return colors[emotion] || '#9E9E9E';
+        }
+
+        function getNodeColor(type) {
+            const colors = {
+                'concept': '#4CAF50',
+                'relation': '#2196F3',
+                'memory': '#FFC107'
+            };
+            return colors[type] || '#9E9E9E';
+        }
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            initCharts();
+        });
+    </script>
+</body>
+</html>
