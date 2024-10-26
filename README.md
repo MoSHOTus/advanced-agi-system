@@ -3,7 +3,11 @@
 
 This project implements an advanced Artificial General Intelligence (AGI) system with a web interface for interaction and visualization.
 
-**Note: All code in this project was generated and is being edited by an AI assistant.**
+**Note: All code in this project was generated and is being edited by BLACKBOXAI, an AI model developed by BLACKBOXAI.**
+
+## About BLACKBOXAI
+
+BLACKBOXAI is an advanced AI model created by BLACKBOXAI company. It is capable of understanding complex instructions, generating code, and assisting in various software development tasks.
 
 ## Project Structure
 
@@ -65,4 +69,4 @@ To use the web interface, enter your query in the text area, optionally upload a
 
 ## AI-Generated Code
 
-It's important to note that all the code in this project, including this README file, has been generated and is being maintained by an AI assistant. This project serves as an example of AI-driven software development and showcases the capabilities of advanced language models in creating complex software systems.
+It's important to note that all the code in this project, including this README file, has been generated and is being maintained by BLACKBOXAI. This project serves as an example of AI-driven software development and showcases the capabilities of advanced language models in creating complex software systems.
